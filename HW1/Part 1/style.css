@@ -1,0 +1,92 @@
+body{
+    height: 100%;      /* 讓 body 撐滿全螢幕 */
+    margin: 0;         /* 去掉預設 margin */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 18px;    /* 基本字級 (14–16px 建議選 16px，清楚可讀) */
+    line-height: 1.4;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;  /* 水平置中 */
+    align-items: center;      /* 垂直置中 */
+    height: 100vh;            /* 滿版高度 */
+}
+
+.card{
+    height: 413px;
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; 
+    align-items: center;
+    background-color: white;
+    padding: 15px;
+    border: 3px solid black;
+}
+
+.header {
+    margin-bottom: 15px;
+    background-color: yellow;
+    width: 100%;
+    text-align: center;
+    padding: 5px 0px 5px 0px;
+    border: 3px solid black;
+}
+
+.prices{
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.title1 {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.40em;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0;
+}
+
+.title2 {
+    font-size: 20px;               
+    font-weight: 900;              
+    text-align: center;             
+    margin: 4px 0 0 0;              
+    color: black;                  
+    letter-spacing: 0.40em;
+}
+
+.rent{
+    text-align: center; 
+}
+
+.row {
+    display: flex;
+    justify-content: space-between; /* 左右兩側對齊 */
+    margin: 2px 0;                  /* 行距微調 */
+}
+
+.row1{
+    display: flex;
+    justify-content: center; /* 左右兩側對齊 */
+    margin: 2px 0;  
+}
+
+.desc {
+    text-align: left;  /* 左欄靠左 */
+    padding-left: 45px;
+}
+
+.amount {
+    text-align: right; /* 右欄靠右 */   
+    padding-right: 60px;
+}
+
+.rules{
+    font-size: 14px;
+}
+
+.copyright{
+    font-size: 14px;
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!-- <title>To-Do List (Layout Only)</title> -->
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="app">
+            <!-- 先留空，後面一步步加入內容 -->
+            <h1>To-Do List</h1>
+            <section class="controls">
+                <div class="row">
+                    <input type="text" placeholder="Teammate Name" aria-label="Teammate name"/>
+                    <button class="btn btn-primary" type="button">Add</button>
+                </div>
+            </section>
+
+            <section class="controls">
+                <div class="row">
+                    <select aria-label="Select teammate">
+                        <option>Leo</option>
+                        <option>Laura</option>
+                        <option>Arnavi</option>
+                    </select>
+                    <input type="text" placeholder="Task" aria-label="Task title"/>
+                    <input type="date" aria-label="Due date"/>
+                    <button class="btn btn-primary" type="button">Assign</button>
+                </div>
+            </section>
+            
+            <div class="separator"></div>
+
+            <section class="group">
+                <h2>Arnavi</h2>
+                <ul class="task-list">
+                    <li class="task-item">
+                    <span class="task-title">Set up Flask server</span>
+                    <span class="task-due">Due: 2099-10-01</span>
+                    <label class="task-check"><input type="checkbox" /></label>
+                    </li>
+                    <li class="task-item">
+                    <span class="task-title">Set up Git repo</span>
+                    <span class="task-due">Due: 2099-10-01</span>
+                    <label class="task-check"><input type="checkbox" /></label>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="group">
+                <h2>Laura</h2>
+                <ul class="task-list">
+                    <li class="task-item">
+                    <span class="task-title">Draft weekly plan</span>
+                    <span class="task-due">Due: 2099-09-28</span>
+                    <label class="task-check"><input type="checkbox" /></label>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="group">
+                <h2>Leo</h2>
+                <ul class="task-list">
+                    <li class="task-item">
+                    <span class="task-title">Survey existing apps</span>
+                    <span class="task-due">Due: 2099-09-28</span>
+                    <label class="task-check"><input type="checkbox" /></label>
+                    </li>
+                </ul>
+            </section>
+
+            <div class="separator"></div>
+
+            <footer class="footer-controls">
+                <button class="btn btn-success" type="button">Clear Completed</button>
+                <button class="btn btn-neutral" type="button">Reset</button>
+            </footer>
+        </div>
+    </body>
+</html>
