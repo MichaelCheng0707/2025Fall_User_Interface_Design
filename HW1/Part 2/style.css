@@ -1,19 +1,17 @@
-/* 基本設計代幣 */
-:root{
+:root {
     --color-page:#f4f4f4;
     --color-card:#fff;
     --radius-lg:10px;
     --gap-24:24px;
     --elev-10:0 10px 24px rgba(0,0,0,.08);
-    --font-main-heading: 2em;      /* To-Do List */
+    --font-main-heading: 2em; /* To-Do List */
     --font-secondary-heading: 1.17em; /* e.g., Leo */
-    --font-bottom-label: 0.81em;   /* e.g., Clear Completed, Reset */
-    --font-default: 1em;           /* General text, inputs, labels */
+    --font-bottom-label: 0.81em; /* e.g., Clear Completed, Reset */
+    --font-default: 1em; /* General text, inputs, labels */
 }
 
-/* 重置 & 版面背景 */
 *{ box-sizing:border-box; }
-html,body{ 
+html,body { 
     height:100%; 
 }
 
@@ -43,13 +41,12 @@ button {
     font-size: var(--font-bottom-label); 
 }
 
-/* 中央白色卡片：圓角 10、陰影 10、上方 50px */
-.app{
-    width:min(92vw, 760px);           /* 響應式＋最大寬度 760 */
-    margin:0 auto 0;               /* 規格：上方 50px、水平置中 */
+.app {
+    width:min(92vw, 760px);           
+    margin:0 auto 0;      
     background:var(--color-card);
-    border-radius:var(--radius-lg);   /* 10px around the list */
-    box-shadow:var(--elev-10);        /* 10px box shadow */
+    border-radius:var(--radius-lg); /* 10px around the list */
+    box-shadow:var(--elev-10); /* 10px box shadow */
     padding:var(--gap-24);
 }
 
@@ -57,7 +54,7 @@ button {
     display: flex;
     gap: 12px;
     align-items: center;
-    flex-wrap: wrap;      /* stack on small screens */
+    flex-wrap: wrap; /* stack on small screens */
     margin-top: 16px;
 }
 
@@ -83,12 +80,12 @@ input[type="date"] {
 
 /* Text input */
 input[type="text"] {
-    height: 40px;                /* touch-friendly height */
+    height: 40px;
     padding: 0 12px;
-    font-size: var(--font-default); /* use default font size (16px) */
+    font-size: var(--font-default); 
     border: 1px solid #e5e5e5;
     border-radius: 5px;
-    flex: 1 1 auto;              /* grow to fill remaining space */
+    flex: 1 1 auto;
 }
 
 /* Button */
@@ -97,7 +94,7 @@ input[type="text"] {
     padding: 0 16px;
     border: none;
     border-radius: 5px;
-    font-weight: 600;
+    font-weight: 400;
     cursor: pointer;
     color: #fff;
     transition: background-color 0.3s ease;
@@ -118,6 +115,7 @@ input[type="text"] {
 .btn-success {
     background: #64d05e;
     color: #fff;
+    height: 25px
 }
 .btn-success:hover {
     background: #4ea649;
@@ -126,7 +124,7 @@ input[type="text"] {
 /* Neutral button (Reset) */
 .btn-neutral {
     background: #c3c3c3;
-    color: #1e1e1e;               /* darker text for contrast */
+    height: 25px
 }
 .btn-neutral:hover {
     background: #8f8f8f;
@@ -134,7 +132,7 @@ input[type="text"] {
 
 /* Task item card */
 .task-item {
-    background: #f4f4f4;    /* light gray card */
+    background: #f4f4f4;
     border-radius: 5px;
     padding: 16px;
     display: grid;
@@ -144,11 +142,12 @@ input[type="text"] {
     margin-bottom: 4px;
 }
 
-.task-list{
+.task-list {
     padding: 0;
 }
+
 .task-title {
-    font-size: var(--font-default); /* 1em (16px) */
+    font-size: var(--font-default);
     overflow-wrap: anywhere;
 }
 
@@ -166,19 +165,20 @@ input[type="text"] {
 }
 
 .task-check input {
-  width: 18px;
-  height: 18px;
+    width: 18px;
+    height: 18px;
 }
 
 /* Responsive: on very small screens, let due date wrap below */
 @media (max-width: 480px) {
-  .task-item {
+    .task-item {
         grid-template-columns: 1fr auto;
-  }
-  .task-due {
-    grid-column: 1 / -1;
+    }
+    .task-due 
+    {
+        grid-column: 1 / -1;
         text-align: left;
-  }
+    }
 }
 
 .separator {
@@ -190,7 +190,7 @@ input[type="text"] {
 /* Footer control buttons */
 .footer-controls {
     display: flex;
-    justify-content: center; /* center horizontally */
-    gap: 12px;               /* spacing between buttons */
-    margin-top: 24px;        /* space above footer */
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
 }
