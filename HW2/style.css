@@ -1,0 +1,201 @@
+:root {
+    --color-page:#f4f4f4;
+    --color-card:#fff;
+    --radius-lg:10px;
+    --gap-24:24px;
+    --elev-10:0 10px 24px rgba(0,0,0,.08);
+    --font-main-heading: 2em; /* To-Do List */
+    --font-secondary-heading: 1.17em; /* e.g., Leo */
+    --font-bottom-label: 0.81em; /* e.g., Clear Completed, Reset */
+    --font-default: 1em; /* General text, inputs, labels */
+}
+
+*{ box-sizing:border-box; }
+html,body { 
+    height:100%; 
+}
+
+body{
+    margin:0;
+    font-family: Arial, sans-serif;   
+    background:var(--color-page);    
+    font-size: var(--font-default); 
+    padding-top: 50px;
+}
+
+h1 {
+    font-size: var(--font-main-heading); 
+    font-weight: bold;
+    margin:0;
+    text-align:center;
+}
+
+h2 { 
+    font-size: var(--font-secondary-heading); 
+    font-weight: bold;
+    margin: 16px 0 12px;
+    text-align:center;
+}
+
+button { 
+    font-size: var(--font-bottom-label); 
+}
+
+.app {
+    width:min(92vw, 760px);           
+    margin:0 auto 0;      
+    background:var(--color-card);
+    border-radius:var(--radius-lg); /* 10px around the list */
+    box-shadow:var(--elev-10); /* 10px box shadow */
+    padding:var(--gap-24);
+}
+
+.controls .row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap; /* stack on small screens */
+    margin-top: 16px;
+}
+
+/* Select box */
+select {
+    /* height: 40px; */
+    padding: 0 10px;
+    font-size: var(--font-default);
+    border: 1px solid #e5e5e5;
+    border-radius: 5px;
+    flex: 0 1 160px; /* fixed-ish width, can shrink */
+}
+
+/* Date input */
+input[type="date"] {
+    height: 40px;
+    padding: 0 10px;
+    font-size: var(--font-default);
+    border: 1px solid #e5e5e5;
+    border-radius: 5px;
+    flex: 0 1 170px; /* about same width as select */
+}
+
+/* Text input */
+input[type="text"] {
+    height: 40px;
+    padding: 0 12px;
+    font-size: var(--font-default); 
+    border: 1px solid #e5e5e5;
+    border-radius: 5px;
+    flex: 1 1 auto;
+}
+
+/* Button */
+.btn {
+    height: 40px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 400;
+    cursor: pointer;
+    color: #fff;
+    transition: background-color 0.3s ease;
+    font-size: var(--font-default);
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #007bff;
+    min-width: 90px;
+    width: auto;
+}
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+/* Success button (Clear Completed) */
+.btn-success {
+    background: #64d05e;
+    color: #fff;
+    height: 25px
+}
+.btn-success:hover {
+    background: #4ea649;
+}
+
+/* Neutral button (Reset) */
+.btn-neutral {
+    background: #c3c3c3;
+    height: 25px
+}
+.btn-neutral:hover {
+    background: #8f8f8f;
+}
+
+/* Task item card */
+.task-item {
+    background: #f4f4f4;
+    border-radius: 5px;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 1fr auto auto; /* left (extend to fill)| middle | right */
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.task-item.completed {
+  background: #64d05e;
+  color: #fff;            /* 讓文字在綠底上更清楚 */
+}
+
+.task-list {
+    padding: 0;
+}
+
+.task-title {
+    font-size: var(--font-default);
+    overflow-wrap: anywhere;
+}
+
+/* Middle: due date */
+.task-due {
+    text-align: right;
+    min-width: 10ch;
+}
+
+/* Right: checkbox */
+.task-check {
+    display: flex;
+    justify-content: flex-end;
+    cursor: pointer;
+}
+
+.task-check input {
+    width: 18px;
+    height: 18px;
+}
+
+/* Responsive: on very small screens, let due date wrap below */
+@media (max-width: 480px) {
+    .task-item {
+        grid-template-columns: 1fr auto;
+    }
+    .task-due 
+    {
+        grid-column: 1 / -1;
+        text-align: left;
+    }
+}
+
+.separator {
+    height: 2.5px;
+    background: var(--color-page);
+    margin: 16px 0;
+}
+
+/* Footer control buttons */
+.footer-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+}
