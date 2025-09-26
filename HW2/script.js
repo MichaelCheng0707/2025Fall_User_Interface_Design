@@ -1,9 +1,59 @@
-document.addEventListener("DOMContentLoaded", updateEmptyState);
+const STORAGE_KEY = "todo-app-v1";
 
 
+document.addEventListener("DOMContentLoaded", () => {
+  loadFromStorage();
+
+  // still enforce today's date as min
+  const dateInput = document.querySelector("#AssignTask input[type='date']");
+  dateInput.min = todayISO();
+  sortDropdownExceptPlaceholder(dropdown);
+});
+
+// global elements
+const dropdown = document.querySelector("#AssignTask select");
 const section = document.getElementById("AddTeammate");
 const button = section.querySelector("button");
 const input = section.querySelector("input");
+
+// global event listeners
+dropdown.addEventListener("change", () => {
+  dropdown.dataset.touched = "1"; // user has chosen something once
+});
+
+function getPlaceholder(select) {
+  return select.querySelector("option[disabled]");
+}
+
+function rebuildOptionsKeepPlaceholderFirst(select, sortedOptions) {
+  const placeholder = getPlaceholder(select);
+  const prevValue = select.value;  // remember current selection (value or text都可)
+
+  // clear and rebuild: placeholder first, then others
+  select.innerHTML = "";
+  if (placeholder) select.appendChild(placeholder);
+  sortedOptions.forEach(opt => select.appendChild(opt));
+
+  // selection rule:
+  // - if user never touched → force placeholder selected
+  // - else try restore previous selection
+  if (!select.dataset.touched) {
+    if (placeholder) placeholder.selected = true;
+  } else {
+    const toRestore = Array.from(select.options)
+      .find(o => o.value === prevValue || o.text === prevValue);
+    if (toRestore) toRestore.selected = true;
+  }
+}
+
+function sortDropdownExceptPlaceholder(select) {
+  const placeholder = getPlaceholder(select);
+  const others = Array.from(select.options).filter(o => o !== placeholder);
+  others.sort((a, b) =>
+    a.text.localeCompare(b.text, undefined, { sensitivity: "base" })
+  );
+  rebuildOptionsKeepPlaceholderFirst(select, others);
+}
 
 button.addEventListener("click", () => {
   const name = input.value.trim();
@@ -18,8 +68,6 @@ button.addEventListener("click", () => {
 });
 
 function addTeammateToDropdown(name) {
-  const dropdown = document.querySelector("#AssignTask select");
-  
   // check duplicate cases
   const exists = Array.from(dropdown.options).some(
     (opt) => opt.value.toLowerCase() === name.toLowerCase()
@@ -36,12 +84,10 @@ function addTeammateToDropdown(name) {
 
   dropdown.appendChild(option);
 
-  const sorted = Array.from(dropdown.options).sort((a, b) =>
-    a.text.localeCompare(b.text, undefined, { sensitivity: "base" })
-  );
-  dropdown.innerHTML = "";
-  sorted.forEach((opt) => dropdown.appendChild(opt));
+  sortDropdownExceptPlaceholder(dropdown);
 
+
+  saveFromDOM(); 
 }
 
 
@@ -49,12 +95,16 @@ const assignSec   = document.getElementById("AssignTask");
 const selectEl    = assignSec.querySelector("select");
 const taskInput   = assignSec.querySelector("input[type='text']");
 const dateInput   = assignSec.querySelector("input[type='date']");
-dateInput.min = todayISO();
 const assignBtn   = assignSec.querySelector("button");
 const groupsHost  = document.getElementById("groups");
 
 assignBtn.addEventListener("click", () => {
-  if (!selectEl.value) { alert("Please select a teammate"); return; }
+  const selected = selectEl.selectedOptions[0];
+  if (!selected || selected.disabled) {
+    alert("Please select a teammate");
+    return;
+  }
+  // if (!selectEl.value) { alert("Please select a teammate"); return; }
   const teammate = selectEl.value;
   const text = taskInput.value.trim();
   if (!text) { alert("Please enter a task"); return; }
@@ -70,7 +120,7 @@ assignBtn.addEventListener("click", () => {
   list.appendChild(createTaskItem(text, due));
   sortListByDue(list);
   updateEmptyState();
-
+  saveFromDOM(); 
   // clear inputs
   taskInput.value = "";
   dateInput.value = "";
@@ -125,6 +175,7 @@ function createTaskItem(text, due) {
 
   cb.addEventListener("change", () => {
     li.classList.toggle("completed", cb.checked);
+    saveFromDOM(); 
   });
 
   label.appendChild(cb);
@@ -167,7 +218,7 @@ clearBtn.addEventListener("click", () => {
     }
   });
   updateEmptyState();
-
+  saveFromDOM(); 
 });
 
 // Reset: confirm, then wipe everything back to initial state
@@ -194,8 +245,7 @@ resetBtn.addEventListener("click", () => {
   assignSec.querySelector("input[type=\'date\']").value = "";     // due date
 
   updateEmptyState();
-
-  // （可選）若你有其他狀態變數/快取，也在這裡一併清除
+  saveFromDOM(); 
 });
 
 
@@ -211,8 +261,119 @@ function updateEmptyState() {
       const p = document.createElement("p");
       p.id = "emptyState";
       p.className = "empty-state";
-      p.textContent = "No tasks right now.";
+      p.textContent = "No tasks right now. Please add a teammate and assign a task.";
       groupsHost.appendChild(p);
     }
   }
+}
+
+/**
+ * Snapshot current DOM and write to localStorage.
+ * Shape:
+ * {
+ *   teammates: [
+ *     { name: "Leo", tasks: [ { text, due, completed } ] }
+ *     { name: "Mia", tasks: [ ... ] }
+ *     { name: "Zoe", tasks: [ ... ] }
+ *   ]
+ * }
+*/
+
+function saveFromDOM() {
+  try {
+    // 1) Collect teammate names from the dropdown (exclude disabled placeholder)
+    const teammateNames = Array.from(dropdown.options)
+      .filter(o => !o.disabled)
+      .map(o => (o.value || o.text).trim())
+      .filter(Boolean);
+
+    // 2) Collect tasks from each group section
+    const groups = document.querySelectorAll("#groups section.group");
+    const byName = {};
+    groups.forEach(sec => {
+      const name = (sec.dataset.name || sec.querySelector("h2")?.textContent || "").trim();
+      const lis = sec.querySelectorAll("li.task-item");
+      byName[name] = Array.from(lis).map(li => ({
+        text: li.querySelector(".task-title").textContent,
+        // prefer dataset.due (we set it when creating the item)
+        due: li.dataset.due,
+        completed: li.classList.contains("completed")
+      }));
+    });
+
+    // 3) Build state in teammate name order
+    const state = {
+      teammates: teammateNames.map(n => ({
+        name: n,
+        tasks: byName[n] || []
+      }))
+    };
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {
+    console.error("Failed to save to localStorage:", e);
+  }
+}
+
+/**
+ * Load state from localStorage and rebuild the UI
+ */
+function loadFromStorage() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) {
+    updateEmptyState(); // nothing saved → show empty state
+    return;
+  }
+
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch (e) {
+    console.error("Failed to parse localStorage data:", e);
+    updateEmptyState();
+    return;
+  }
+
+  if (!data || !Array.isArray(data.teammates)) {
+    updateEmptyState();
+    return;
+  }
+
+  // --- 1) Rebuild dropdown ---
+  const placeholder = dropdown.querySelector("option[disabled]") || dropdown.options[0];
+  dropdown.innerHTML = "";
+  if (placeholder) dropdown.appendChild(placeholder);
+
+  data.teammates
+    .map(t => t.name)
+    .sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }))
+    .forEach(name => {
+      const opt = new Option(name, name);
+      dropdown.add(opt);
+    });
+
+  // --- 2) Rebuild groups + tasks ---
+  groupsHost.innerHTML = ""; // clear old
+  data.teammates.forEach(t => {
+    if (!t.tasks || t.tasks.length === 0) return;
+
+    const sect = getOrCreateGroup(t.name);
+    const ul = sect.querySelector(".task-list");
+    ul.innerHTML = "";
+
+    t.tasks
+      .slice()
+      .sort((x, y) => (x.due || "").localeCompare(y.due || ""))
+      .forEach(task => {
+        const li = createTaskItem(task.text, task.due);
+        if (task.completed) {
+          li.classList.add("completed");
+          li.querySelector("input[type='checkbox']").checked = true;
+        }
+        ul.appendChild(li);
+      });
+  });
+
+  sortGroupsByName();
+  updateEmptyState();
 }
