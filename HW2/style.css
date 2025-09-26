@@ -199,3 +199,10 @@ input[type="text"] {
     gap: 12px;
     margin-top: 24px;
 }
+
+.empty-state {
+  color: #666;
+  text-align: center;
+  padding: 12px 0;
+  font-size: 0.95rem;
+}

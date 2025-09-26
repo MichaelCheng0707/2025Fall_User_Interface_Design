@@ -1,3 +1,4 @@
+document.addEventListener("DOMContentLoaded", updateEmptyState);
 
 
 const section = document.getElementById("AddTeammate");
@@ -68,6 +69,7 @@ assignBtn.addEventListener("click", () => {
   const list = groupSection.querySelector(".task-list");
   list.appendChild(createTaskItem(text, due));
   sortListByDue(list);
+  updateEmptyState();
 
   // clear inputs
   taskInput.value = "";
@@ -147,4 +149,70 @@ function sortGroupsByName() {
     (a.dataset.name || "").localeCompare(b.dataset.name || "", undefined, { sensitivity: "base" })
   );
   sections.forEach(s => groupsHost.appendChild(s)); // re-append in sorted order
+}
+
+// Clear Completed: remove all completed items, then remove empty groups
+const clearBtn = document.querySelector(".footer-controls .btn-success");
+
+clearBtn.addEventListener("click", () => {
+
+  // 1) remove completed tasks
+  groupsHost.querySelectorAll(".task-item.completed").forEach(li => li.remove());
+
+  // 2) remove empty teammate sections
+  groupsHost.querySelectorAll("section.group").forEach(section => {
+    const list = section.querySelector(".task-list");
+    if (!list || list.children.length === 0) {
+      section.remove();
+    }
+  });
+  updateEmptyState();
+
+});
+
+// Reset: confirm, then wipe everything back to initial state
+const resetBtn   = document.querySelector(".footer-controls .btn-neutral");
+
+resetBtn.addEventListener("click", () => {
+  const ok = confirm("Are you sure you want to reset all teammates and to-do items?");
+  if (!ok) return;
+
+  // 1) remove all groups / tasks
+  groupsHost.innerHTML = "";
+
+  // 2) reset the Assign select back to placeholder-only
+  const assignSec = document.getElementById("AssignTask");
+  const selectEl  = assignSec.querySelector("select");
+  selectEl.innerHTML = '<option disabled selected>Assign to</option>';
+  selectEl.selectedIndex = 0;           // make sure placeholder is selected
+  delete selectEl.dataset?.touched;     // if you used this flag earlier
+
+  // 3) clear all form inputs
+  const addSec   = document.getElementById("AddTeammate");
+  addSec.querySelector("input[type='text']").value = "";          // teammate name
+  assignSec.querySelector("input[type='text']").value = "";       // task title
+  assignSec.querySelector("input[type=\'date\']").value = "";     // due date
+
+  updateEmptyState();
+
+  // （可選）若你有其他狀態變數/快取，也在這裡一併清除
+});
+
+
+function updateEmptyState() {
+  const groupsHost = document.getElementById("groups");
+  const hasTasks = !!groupsHost.querySelector(".task-item");
+  const existing = document.getElementById("emptyState");
+
+  if (hasTasks) {
+    if (existing) existing.remove();
+  } else {
+    if (!existing) {
+      const p = document.createElement("p");
+      p.id = "emptyState";
+      p.className = "empty-state";
+      p.textContent = "No tasks right now.";
+      groupsHost.appendChild(p);
+    }
+  }
 }
